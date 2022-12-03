@@ -30,18 +30,17 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(input: &str) -> Option<Self> {
-        let choices_char: Vec<&str> = input.split(" ").collect();
-        let opponent_selection = match choices_char[0] {
-            "A" => RpsSelection::Rock,
-            "B" => RpsSelection::Paper,
-            "C" => RpsSelection::Scissors,
+    pub fn new(input: &[u8]) -> Option<Self> {
+        let opponent_selection = match input[0] {
+            b'A' => RpsSelection::Rock,
+            b'B' => RpsSelection::Paper,
+            b'C' => RpsSelection::Scissors,
             _ => return None,
         };
-        let my_selection = match choices_char[1] {
-            "X" => RpsSelection::Rock,
-            "Y" => RpsSelection::Paper,
-            "Z" => RpsSelection::Scissors,
+        let my_selection = match input[2] {
+            b'X' => RpsSelection::Rock,
+            b'Y' => RpsSelection::Paper,
+            b'Z' => RpsSelection::Scissors,
             _ => return None,
         };
         Some(Game {
@@ -49,24 +48,23 @@ impl Game {
             my_selection,
         })
     }
-    pub fn new2(input: &str) -> Option<Self> {
-        let choices_char: Vec<&str> = input.split(" ").collect();
-        let opponent_selection = match choices_char[0] {
-            "A" => RpsSelection::Rock,
-            "B" => RpsSelection::Paper,
-            "C" => RpsSelection::Scissors,
+    pub fn new2(input: &[u8]) -> Option<Self> {
+        let opponent_selection = match input[0] {
+            b'A' => RpsSelection::Rock,
+            b'B' => RpsSelection::Paper,
+            b'C' => RpsSelection::Scissors,
             _ => return None,
         };
-        let my_selection = match (&opponent_selection, choices_char[1]) {
-            (RpsSelection::Rock, "X") => RpsSelection::Scissors,
-            (RpsSelection::Paper, "X") => RpsSelection::Rock,
-            (RpsSelection::Scissors, "X") => RpsSelection::Paper,
-            (RpsSelection::Rock, "Y") => RpsSelection::Rock,
-            (RpsSelection::Paper, "Y") => RpsSelection::Paper,
-            (RpsSelection::Scissors, "Y") => RpsSelection::Scissors,
-            (RpsSelection::Rock, "Z") => RpsSelection::Paper,
-            (RpsSelection::Paper, "Z") => RpsSelection::Scissors,
-            (RpsSelection::Scissors, "Z") => RpsSelection::Rock,
+        let my_selection = match (&opponent_selection, input[2]) {
+            (RpsSelection::Rock, b'X') => RpsSelection::Scissors,
+            (RpsSelection::Paper, b'X') => RpsSelection::Rock,
+            (RpsSelection::Scissors, b'X') => RpsSelection::Paper,
+            (RpsSelection::Rock, b'Y') => RpsSelection::Rock,
+            (RpsSelection::Paper, b'Y') => RpsSelection::Paper,
+            (RpsSelection::Scissors, b'Y') => RpsSelection::Scissors,
+            (RpsSelection::Rock, b'Z') => RpsSelection::Paper,
+            (RpsSelection::Paper, b'Z') => RpsSelection::Scissors,
+            (RpsSelection::Scissors, b'Z') => RpsSelection::Rock,
             (_, _) => return None,
         };
         Some(Game {
@@ -98,9 +96,11 @@ pub fn score_choice(game: &Game) -> u32 {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
+    // Turns out .lines() is really slow!!!
     Some(
         input
-            .lines()
+            .as_bytes()
+            .chunks(4)
             .map(|l| Game::new(l).unwrap())
             .map(|g| score_game(&g) + score_choice(&g))
             .sum(),
@@ -108,9 +108,11 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
+    // Turns out .lines() is really slow!!!
     Some(
         input
-            .lines()
+            .as_bytes()
+            .chunks(4)
             .map(|l| Game::new2(l).unwrap())
             .map(|g| score_game(&g) + score_choice(&g))
             .sum(),
