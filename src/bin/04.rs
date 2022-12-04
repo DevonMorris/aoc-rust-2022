@@ -13,7 +13,7 @@ impl Interval {
         let lower = cmp::max(self.lower, other.lower);
         let upper = cmp::min(self.upper, other.upper);
         if lower > upper {
-            return None
+            None
         } else {
             Some(Interval{lower, upper})
         }
